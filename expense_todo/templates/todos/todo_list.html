@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}To-Do List{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3><i class="bi bi-list-task"></i> To-Do List</h3>
+    <a href="{% url 'todo_create' %}" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Add Task</a>
+</div>
+
+<div class="mb-3 btn-group">
+    <a href="?show=all" class="btn btn-sm {% if show == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">All</a>
+    <a href="?show=pending" class="btn btn-sm {% if show == 'pending' %}btn-primary{% else %}btn-outline-primary{% endif %}">Pending ({{ pending_count }})</a>
+    <a href="?show=completed" class="btn btn-sm {% if show == 'completed' %}btn-primary{% else %}btn-outline-primary{% endif %}">Completed</a>
+</div>
+
+<div class="card">
+    <ul class="list-group list-group-flush">
+        {% for todo in todos %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <a href="{% url 'todo_toggle' todo.pk %}" class="text-decoration-none fs-5">
+                    {% if todo.completed %}<i class="bi bi-check-circle-fill text-success"></i>{% else %}<i class="bi bi-circle text-secondary"></i>{% endif %}
+                </a>
+                <div>
+                    <div class="{% if todo.completed %}completed-task{% endif %}">{{ todo.title }}</div>
+                    {% if todo.description %}<small class="text-muted">{{ todo.description }}</small>{% endif %}
+                    <div>
+                        <span class="priority-{{ todo.priority }} small">{{ todo.priority }} priority</span>
+                        {% if todo.due_date %}<span class="text-muted small"> · Due {{ todo.due_date }}</span>{% endif %}
+                    </div>
+                </div>
+            </div>
+            <div>
+                <a href="{% url 'todo_update' todo.pk %}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+                <a href="{% url 'todo_delete' todo.pk %}" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></a>
+            </div>
+        </li>
+        {% empty %}
+        <li class="list-group-item text-center text-muted py-4">No tasks here. Add one!</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

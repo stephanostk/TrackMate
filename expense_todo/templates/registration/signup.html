@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Sign Up{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card p-4 mt-5">
+            <h3 class="mb-3 text-center"><i class="bi bi-person-plus"></i> Create Account</h3>
+            <form method="post">
+                {% csrf_token %}
+                {% for field in form %}
+                    <div class="mb-3">
+                        <label class="form-label">{{ field.label }}</label>
+                        {{ field.errors }}
+                        {% if 'password' in field.name %}
+                            <input id="id_{{ field.name }}" type="password" name="{{ field.html_name }}" class="form-control password-field" required>
+                        {% else %}
+                            <input type="text" name="{{ field.html_name }}" class="form-control" required>
+                        {% endif %}
+                        {% if field.help_text %}<div class="form-text">{{ field.help_text|safe }}</div>{% endif %}
+                    </div>
+                {% endfor %}
+                <button type="submit" class="btn btn-primary w-100">Sign Up</button>
+            </form>
+            <p class="text-center mt-3 mb-0">Already have an account? <a href="{% url 'login' %}">Login</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var toggle = document.createElement('div');
+    toggle.innerHTML = '<div class="form-check mt-2"><input class="form-check-input" type="checkbox" value="" id="showSignupPassword"><label class="form-check-label" for="showSignupPassword">Show password</label></div>';
+    var card = document.querySelector('.card .card-body, .card');
+    if (card) {
+        card.appendChild(toggle);
+    } else {
+        var container = document.querySelector('.card');
+        if (container) container.appendChild(toggle);
+    }
+    var checkbox = document.getElementById('showSignupPassword');
+    if (checkbox) {
+        checkbox.addEventListener('change', function () {
+            var pwdFields = document.querySelectorAll('.password-field');
+            pwdFields.forEach(function (f) { f.type = checkbox.checked ? 'text' : 'password'; });
+        });
+    }
+});
+</script>
+{% endblock %}
